@@ -1,0 +1,4 @@
+jupyterlab
+ruff
+black
+pytest

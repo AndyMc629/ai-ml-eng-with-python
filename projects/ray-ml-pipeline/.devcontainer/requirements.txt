@@ -1,0 +1,14 @@
+# ML libraries
+datasets
+evaluate
+transformers>=4.19.0
+torch>=1.10.0
+
+# Experiment tracking
+mlflow
+
+# Distributed training (Ray Train + Ray Tune + dashboard)
+ray[train,tune,default]
+
+# Optional: jupyter for notebooks
+jupyterlab
