@@ -1,0 +1,51 @@
+name: Monorepo CI Dispatcher
+
+on:
+  pull_request:
+    paths:
+      - 'projects/**'
+  push:
+    branches: [main]
+
+jobs:
+  find-projects:
+    runs-on: ubuntu-latest
+    outputs:
+      project-list: ${{ steps.projects.outputs.project-list }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: List all project ci.yaml files
+        id: projects
+        run: |
+          echo "Searching for changed projects with ci.yaml..."
+          changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^projects/' | cut -d/ -f2-3 | uniq)
+          echo "Changed folders: $changed"
+
+          list=""
+          for dir in $changed; do
+            if [ -f "projects/$dir/ci.yaml" ]; then
+              list="$list,$dir"
+            fi
+          done
+          list="${list#,}"  # remove leading comma
+          echo "Detected project-list=$list"
+          echo "project-list=$list" >> $GITHUB_OUTPUT
+
+      - name: Check if project-list is empty
+        run: |
+            if [ -z "${{ steps.projects.outputs.project-list }}" ]; then
+            echo "No projects found, exiting with success"
+            exit 0
+            fi
+
+  matrix-ci:
+    needs: find-projects
+    if: ${{ needs.find-projects.outputs.project-list != '' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson('["' + needs.find-projects.outputs.project-list.replace(',', '","') + '"]') }}
+
+    uses: ./.github/workflows/runners/ci-runner.yml
+    with:
+      project: ${{ matrix.project }}

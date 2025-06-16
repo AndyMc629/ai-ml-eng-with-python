@@ -1,0 +1,61 @@
+name: Project CI Runner
+description: Reusable CI runner for different sub-projects in this monorepo.
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
+
+jobs:
+  run-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/${{ inputs.project }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+            sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+            sudo chmod +x /usr/bin/yq
+
+      - name: Parse project specfic ci.yaml
+        id: config
+        run: |
+          if [ ! -f ci.yaml ]; then
+            echo "No ci.yaml file found, exiting with success"
+            exit 0
+          fi
+
+          if [ -z "$(cat ci.yaml)" ]; then
+            echo "ci.yaml file is empty, exiting with success"
+            exit 0
+          fi
+
+          PYTHON_VERSION=$(yq e '.python_version // "3.10"' ci.yaml)
+          SCRIPT=$(yq e '.custom_script // "./run_ci.sh"' ci.yaml)
+          echo "python_version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+          echo "custom_script=$SCRIPT" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ steps.config.outputs.python_version }}
+
+      - name: Install dependencies
+        run: |
+          if [ ! -f requirements.txt ]; then
+            echo "No requirements.txt file found, skipping dependency installation"
+            exit 0
+          fi
+
+          pip install -r requirements.txt
+
+      - name: Run CI script
+        run: |
+          chmod +x ${{ steps.config.outputs.custom_script }}
+          ${{ steps.config.outputs.custom_script }}
