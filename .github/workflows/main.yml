@@ -19,18 +19,24 @@ jobs:
         id: projects
         run: |
           echo "Searching for changed projects with ci.yaml..."
-          changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^projects/' | cut -d/ -f2-3 | uniq)
-          echo "Changed folders: $changed"
+          changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^projects/' | cut -d/ -f2-3 | uniq || true)
 
-          list=""
+          json_array="["
+          first=true
           for dir in $changed; do
             if [ -f "projects/$dir/ci.yaml" ]; then
-              list="$list,$dir"
+              if [ "$first" = true ]; then
+                first=false
+              else
+                json_array+=","
+              fi
+              json_array+="\"$dir\""
             fi
           done
-          list="${list#,}"  # remove leading comma
-          echo "Detected project-list=$list"
-          echo "project-list=$list" >> $GITHUB_OUTPUT
+          json_array+="]"
+
+          echo "Final matrix: $json_array"
+          echo "project-list=$json_array" >> $GITHUB_OUTPUT
 
       - name: Check if project-list is empty
         run: |
@@ -41,10 +47,10 @@ jobs:
 
   matrix-ci:
     needs: find-projects
-    if: ${{ needs.find-projects.outputs.project-list != '' }}
+    if: ${{ needs.find-projects.outputs.project-list != '[]' }}
     strategy:
       matrix:
-        project: ${{ fromJson(format('["{0}"]', join(split(needs.find-projects.outputs.project-list, ','), '","'))) }}
+        project: ${{ fromJson(needs.find-projects.outputs.project-list) }}
 
     uses: ./.github/workflows/ci-runner.yml
     with:
