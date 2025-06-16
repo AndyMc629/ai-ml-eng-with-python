@@ -44,7 +44,7 @@ jobs:
     if: ${{ needs.find-projects.outputs.project-list != '' }}
     strategy:
       matrix:
-        project: ${{ fromJson('["' + needs.find-projects.outputs.project-list.replace(',', '","') + '"]') }}
+        project: ${{ fromJson(format('["{0}"]', replace(needs.find-projects.outputs.project-list, ',', '","'))) }}
 
     uses: ./.github/workflows/ci-runner.yml
     with:
