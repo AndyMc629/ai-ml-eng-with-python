@@ -46,6 +46,6 @@ jobs:
       matrix:
         project: ${{ fromJson('["' + needs.find-projects.outputs.project-list.replace(',', '","') + '"]') }}
 
-    uses: .github/workflows/ci-runner.yml@main
+    uses: ./github/workflows/ci-runner.yml@main
     with:
       project: ${{ matrix.project }}
