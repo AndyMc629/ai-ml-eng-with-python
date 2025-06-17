@@ -1,14 +1,14 @@
 # ML libraries
-datasets
-evaluate
+datasets==3.6.0
+evaluate==0.4.3
 transformers>=4.19.0
 torch>=1.10.0
 
 # Experiment tracking
-mlflow
+mlflow==3.1.0
 
 # Distributed training (Ray Train + Ray Tune + dashboard)
-ray[train,tune,default]
+ray[train,tune,default]==2.47.0
 
 # Optional: jupyter for notebooks
-jupyterlab
+jupyterlab==4.4.3

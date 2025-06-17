@@ -1,0 +1,33 @@
+name: ray-ml-pipeline-ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      RAY_ADDRESS: ${{ secrets.RAY_ADDRESS }}
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Run ruff
+        run: ruff .
+      - name: Run tests
+        run: pytest -v
+      - name: Run training
+        run: |
+          ray up -y ray_cluster.yaml
+          ray submit ray_cluster.yaml train.py
+      - name: Run validation
+        run: |
+          ray submit ray_cluster.yaml val.py
