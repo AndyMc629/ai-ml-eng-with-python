@@ -16,7 +16,10 @@ venv/
 
 # Editors
 .vscode/
+
+# PyCharm specific files (more comprehensive)
 .idea/
+*.iml
 
 # OS generated files
 .DS_Store
@@ -34,6 +37,9 @@ thumbs.db
 # Docker
 *.swp
 *.bak
+
+# XML files
+*.xml
 
 # MLflow
 mlruns/
