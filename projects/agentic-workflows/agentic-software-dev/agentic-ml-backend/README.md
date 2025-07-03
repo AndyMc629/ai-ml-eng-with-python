@@ -16,14 +16,14 @@ This project sets up a FastAPI application to serve a machine learning model, in
 1.  **Build and Run Docker Containers:**
     Navigate to the `agentic-ml-backend` directory and run:
     ```bash
-    docker-compose up --build -d
+    docker compose up --build -d
     ```
-    This will start the MLflow tracking server (on `http://localhost:5000`) and the FastAPI application (on `http://localhost:8000`).
+    This will start the MLflow tracking server (on `http://localhost:5001`) and the FastAPI application (on `http://localhost:8000`).
 
 2.  **Train and Register a Model:**
     Before the FastAPI application can serve predictions, a model needs to be registered with MLflow. You can run the `train_model.py` script inside the `fastapi-app` container:
     ```bash
-    docker-compose exec fastapi-app python train_model.py
+    docker compose exec fastapi-app python train_model.py
     ```
     This script will train a dummy sentiment classifier and register it as `sentiment_classifier` in your local MLflow instance.
 
@@ -33,7 +33,7 @@ This project sets up a FastAPI application to serve a machine learning model, in
     -   **Predict Endpoint:** `http://localhost:8000/predict` (POST request with JSON body `{"text": "your text here"}`)
 
 4.  **Access MLflow UI:**
-    -   `http://localhost:5000`
+    -   `http://localhost:5001`
 
 ## Testing
 
@@ -41,7 +41,7 @@ Unit tests are located in the `tests/` directory. To run them:
 
 ```bash
 # First, ensure you are in the agentic-ml-backend directory
-docker-compose exec fastapi-app pytest
+docker compose exec fastapi-app pytest
 ```
 
 ## Cleaning Up
@@ -49,11 +49,10 @@ docker-compose exec fastapi-app pytest
 To stop and remove the Docker containers and networks:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 To remove MLflow tracking data (optional):
 
 ```bash
 rm -rf mlruns
-```

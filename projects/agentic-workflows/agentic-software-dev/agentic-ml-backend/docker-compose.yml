@@ -4,7 +4,7 @@ services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.13.0
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - MLFLOW_BACKEND_STORE_URI=/mlflow/mlruns
