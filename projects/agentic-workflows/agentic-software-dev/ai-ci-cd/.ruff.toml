@@ -1,0 +1,15 @@
+[tool.ruff]
+select = ["E", "F", "B", "I", "Q", "UP"]
+ignore = ["E501"]
+line-length = 100
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
+[tool.ruff.flake8-quotes]
+inline-quotes = "double"
+multiline-quotes = "double"
+docstring-quotes = "double"
+
+[tool.ruff.black]
+line-length = 100
