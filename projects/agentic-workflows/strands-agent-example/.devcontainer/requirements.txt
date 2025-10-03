@@ -1,0 +1,7 @@
+strands-agents[openai]
+strands-agents-tools
+fastapi[standard]
+pydantic
+asyncio
+scikit-learn==1.7.2
+pandas
