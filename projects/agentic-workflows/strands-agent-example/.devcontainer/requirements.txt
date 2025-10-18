@@ -1,7 +1,11 @@
 strands-agents[openai]
-strands-agents-tools
+strands-agents-tools[use_browser]
 fastapi[standard]
 pydantic
 asyncio
 scikit-learn==1.7.2
 pandas
+traceloop-sdk==0.47.3
+bedrock-agentcore-starter-toolkit
+playwright
+nest-asyncio
