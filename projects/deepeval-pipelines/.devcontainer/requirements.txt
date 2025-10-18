@@ -1,0 +1,17 @@
+deepeval
+ipykernel 
+jupyter
+notebook
+pydantic
+asyncio
+langchain
+langgraph
+langchain-community 
+langchain-openai 
+chromadb
+scikit-learn==1.7.2
+pandas
+traceloop-sdk==0.47.3
+bedrock-agentcore-starter-toolkit
+playwright
+nest-asyncio
